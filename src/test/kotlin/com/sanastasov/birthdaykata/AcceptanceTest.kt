@@ -19,6 +19,11 @@ class AcceptanceTest : StringSpec() {
         BirthdayService by BirthdayServiceInterpreter(),
         EmailService by SmtpEmailService("localhost", port) {}
 
+    fun testEnvFailingRepository(port: Int): Env = object : Env,
+        EmployeeRepository by FailingFileEmployeeRepository(),
+        BirthdayService by BirthdayServiceInterpreter(),
+        EmailService by SmtpEmailService("localhost", port) {}
+
     override fun beforeTest(testCase: TestCase) {
         super.beforeTest(testCase)
         server = SimpleSmtpServer.start(SimpleSmtpServer.AUTO_SMTP_PORT)
@@ -50,5 +55,29 @@ class AcceptanceTest : StringSpec() {
 
             server.receivedEmails.toList().size shouldBe 0
         }
+
+        "either computation - will send greeting when it is somebody birthday" {
+            testEnv(server.port)
+                .sendGreetingsUseCase(LocalDate.of(2019, 10, 8))
+
+            val sent = server.receivedEmails.toList()
+
+            sent.size shouldBe 1
+            val email = sent.first()
+            email.getHeaderValue("From") shouldBe "birthday@corp.com"
+            email.getHeaderValue("To") shouldBe "john.doe@foobar.com"
+            email.getHeaderValue("Subject") shouldBe "Happy Birthday!"
+            email.body shouldBe "Happy birthday, dear John!"
+        }
+
+        "either computation - will NOT send any greeting when repository fails" {
+            testEnvFailingRepository(server.port)
+                .sendGreetingsUseCase(LocalDate.of(2019, 10, 8))
+
+            val sent = server.receivedEmails.toList()
+
+            sent.size shouldBe 0
+        }
+
     }
 }

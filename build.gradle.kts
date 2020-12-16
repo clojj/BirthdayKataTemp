@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.4.10"
+    kotlin("jvm") version "1.4.21"
 }
 
 group = "com.sanastasov"
@@ -7,6 +7,8 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    maven("https://oss.jfrog.org/artifactory/oss-snapshot-local/")
+    jcenter()
 }
 
 tasks.withType<Test> {
@@ -16,7 +18,7 @@ tasks.withType<Test> {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
 
-    val arrow_version = "0.11.0"
+    val arrow_version = "latest.integration"
     implementation("io.arrow-kt:arrow-core:$arrow_version")
     implementation("io.arrow-kt:arrow-syntax:$arrow_version")
     implementation("io.arrow-kt:arrow-fx:$arrow_version")

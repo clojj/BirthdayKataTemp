@@ -1,5 +1,6 @@
 package com.sanastasov.birthdaykata
 
+import arrow.core.Either
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 
@@ -11,10 +12,13 @@ class FileEmployeeRepositoryTest : StringSpec({
     "all employees are read from a valid CSV file" {
         val sut: EmployeeRepository = FileEmployeeRepository("input.txt")
 
-        val allEmployees = sut.allEmployees()
+        val allEmployees: Either<Throwable, List<Employee>> = sut.allEmployees()
         val expectedEmails = listOf("john.doe@foobar.com", "mary.ann@foobar.com").map(::EmailAddress)
-        allEmployees.size shouldBe 2
-        allEmployees.map { it.emailAddress } shouldBe expectedEmails
+        allEmployees.isRight() shouldBe true
+        allEmployees.map {
+            it.size shouldBe 2
+            it.map { it.emailAddress } shouldBe expectedEmails
+        }
     }
 
     "EmployeeRepositoryException when reading an invalid CSV file" {
