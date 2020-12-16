@@ -56,20 +56,6 @@ class AcceptanceTest : StringSpec() {
             server.receivedEmails.toList().size shouldBe 0
         }
 
-        "either computation - will send greeting when it is somebody birthday" {
-            testEnv(server.port)
-                .sendGreetingsUseCase(LocalDate.of(2019, 10, 8))
-
-            val sent = server.receivedEmails.toList()
-
-            sent.size shouldBe 1
-            val email = sent.first()
-            email.getHeaderValue("From") shouldBe "birthday@corp.com"
-            email.getHeaderValue("To") shouldBe "john.doe@foobar.com"
-            email.getHeaderValue("Subject") shouldBe "Happy Birthday!"
-            email.body shouldBe "Happy birthday, dear John!"
-        }
-
         "either computation - will NOT send any greeting when repository fails" {
             testEnvFailingRepository(server.port)
                 .sendGreetingsUseCase(LocalDate.of(2019, 10, 8))
@@ -77,6 +63,7 @@ class AcceptanceTest : StringSpec() {
             val sent = server.receivedEmails.toList()
 
             sent.size shouldBe 0
+            // TODO return Either from UseCase and assert here
         }
 
     }
