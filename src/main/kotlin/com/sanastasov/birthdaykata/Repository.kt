@@ -26,11 +26,13 @@ class FileEmployeeRepository(fileName: String) : EmployeeRepository {
                 .drop(1)
                 .map(employeeParser)
 
+        // TODO Validated adapt for 0.12
         val validatedEmployees: Validated<NonEmptyList<String>, List<Employee>> = sequence(employees)
 
         validatedEmployees.fold({ Either.left(EmployeeRepositoryException(it)) }, { Either.right(it) })
     }
 
+    // TODO Validated adapt for 0.12
     private fun sequence(input: List<ValidationResult<Employee>>): ValidationResult<List<Employee>> =
         input.sequence(ValidationResult.applicative(Nel.semigroup()))
             .fix()
@@ -48,6 +50,7 @@ class FileEmployeeRepository(fileName: String) : EmployeeRepository {
             val firstName = parts.getOrNull(1)
             val dateOfBirth = parts.getOrNull(2)
             val email = parts.getOrNull(3)
+            // TODO Validated adapt for 0.12
             Employee(firstName, lastName, dateOfBirth, email)
         }
     }
