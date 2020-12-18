@@ -23,6 +23,7 @@ dependencies {
     implementation("io.arrow-kt:arrow-syntax:$arrow_version")
     implementation("io.arrow-kt:arrow-fx:$arrow_version")
     implementation("io.arrow-kt:arrow-fx-coroutines:$arrow_version")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
 
     implementation("com.sun.mail:javax.mail:1.6.2")
     implementation("io.github.microutils:kotlin-logging:1.7.7")

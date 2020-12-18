@@ -1,5 +1,6 @@
 package com.sanastasov.birthdaykata
 
+import arrow.core.Either
 import java.util.*
 import javax.mail.Message
 import javax.mail.Session
@@ -10,18 +11,21 @@ import javax.mail.internet.MimeMessage
 
 interface EmailService {
 
-    suspend fun sendGreeting(emailMessage: EmailMessage): Unit
+    suspend fun sendGreeting(emailMessage: EmailMessage): Either<Throwable, String>
 
-    suspend fun sendGreetings(greetings: List<EmailMessage>): List<Unit> =
-        greetings.map { sendGreeting(it) }
 }
 
 class SmtpEmailService(private val host: String, private val port: Int) : EmailService {
 
-    override suspend fun sendGreeting(emailMessage: EmailMessage): Unit {
+    override suspend fun sendGreeting(emailMessage: EmailMessage): Either<Throwable, String> {
+        println("sending ${emailMessage.subject}")
         val session =  buildSession()
         val message = createMessage(session, emailMessage)
-        Transport.send(message)
+        return Either.catch {
+            Transport.send(message)
+            println("sent")
+            message.subject
+        }
     }
 
     private suspend fun buildSession(): Session {
